@@ -34,7 +34,51 @@
 </head>
 <body>
 <main class="pg">
-<nav class="cr"><a href="/">Petrol Pumps Near Me</a> &rsaquo; Agartala</nav><h1>Petrol Pumps in Agartala — find one near you</h1><p class="ans"><strong>Quick answer:</strong> petrol pumps in Agartala are mostly around highways, ring roads and city outskirts. Open the map, share your location once, and it shows the closest ones with the route drawn on the map itself.</p><a class="cta" href="/?city=agartala">Open the Agartala map &rarr;</a><h2>Where to look in Agartala</h2><p>Agartala sits in east india. The reliable pattern is the same as in Patna, Ranchi and Jamshedpur: highways, ring roads and city outskirts have the density, and the outer areas have fewer but quieter options. If you are new to the city, start where the footfall is and work outward.</p><h2>How to find one right now</h2><ol><li>Open the map and share your location once — it centres on the nearest ones.</li><li>Filter for what you need where the listing records it.</li><li>Tap a pin — the map draws the route and the distance.</li></ol><h2>About this data</h2><p>Every detail comes from OpenStreetMap. Where a feature is not recorded we say so rather than guess — a missing tag means &ldquo;not recorded yet&rdquo;, not &ldquo;not available&rdquo;. If something is wrong, use the feedback button on the map.</p><h2>Questions about petrol pumps in Agartala</h2><details><summary>How many petrol pumps are there in Agartala?</summary><p>We do not publish a count we cannot verify. The live map shows every petrol pump recorded for Agartala and says plainly where a detail is not recorded.</p></details><details><summary>Where do I look for a petrol pump in Agartala?</summary><p>Start with highways, ring roads and city outskirts. In east india, Agartala follows the same pattern as Patna, Ranchi and Jamshedpur.</p></details><details><summary>Anything to watch out for?</summary><p>Yes — queues build up in the early morning and evening. Check the listing before you travel.</p></details><div class="rel"><a href="/">All cities</a><a href="/patna">Patna</a><a href="/ranchi">Ranchi</a></div>
+<nav class="cr"><a href="/">Petrol Pumps Near Me</a> &rsaquo; Agartala</nav><h1>Petrol Pumps in Agartala — find one near you</h1><p class="ans"><strong>Quick answer:</strong> petrol pumps in Agartala are mostly around highways, ring roads and city outskirts. Open the map, share your location once, and it shows the closest ones with the route drawn on the map itself.</p><a class="cta" href="/?city=agartala">Open the Agartala map &rarr;</a><h2>Where to look in Agartala</h2><p>Agartala sits in east india. The reliable pattern is the same as in Patna, Ranchi and Jamshedpur: highways, ring roads and city outskirts have the density, and the outer areas have fewer but quieter options. If you are new to the city, start where the footfall is and work outward.</p><h2>How to find one right now</h2><ol><li>Open the map and share your location once — it centres on the nearest ones.</li><li>Filter for what you need where the listing records it.</li><li>Tap a pin — the map draws the route and the distance.</li></ol><h2>About this data</h2><p>Every detail comes from OpenStreetMap. Where a feature is not recorded we say so rather than guess — a missing tag means &ldquo;not recorded yet&rdquo;, not &ldquo;not available&rdquo;. If something is wrong, use the feedback button on the map.</p>
+<section class="citymap-wrap">
+  <h2>See them on the map</h2>
+  <p>Loads the live map for Agartala. Nothing is fetched until you tap.</p>
+  <button class="cta" id="mapbtn" type="button">Show Agartala on the map &rarr;</button>
+  <div id="citymap" style="height:380px;border-radius:10px;overflow:hidden;margin-top:.8rem;display:none"></div>
+  <p id="mapmsg" style="font-size:.9rem;color:#5b6b7f;margin-top:.5rem"></p>
+</section>
+<script>
+(function(){
+  var btn=document.getElementById('mapbtn'), box=document.getElementById('citymap'), msg=document.getElementById('mapmsg');
+  var CITY="Agartala", TAG="amenity=fuel", loaded=false;
+  function css(){var l=document.createElement('link');l.rel='stylesheet';l.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(l);}
+  function js(cb){var s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';s.onload=cb;document.head.appendChild(s);}
+  btn.addEventListener('click',function(){
+    if(loaded)return; loaded=true; btn.disabled=true; msg.textContent='Finding Agartala…';
+    css(); js(function(){
+      fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(CITY))
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(!j||!j.length){msg.textContent='Could not locate Agartala. Use the main map instead.';return;}
+          var lat=+j[0].lat, lon=+j[0].lon;
+          box.style.display='block';
+          var map=L.map('citymap').setView([lat,lon],12);
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+          msg.textContent='Loading places…';
+          var q='[out:json][timeout:25];node['+TAG+'](around:6000,'+lat+','+lon+');out body 200;';
+          return fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)})
+            .then(function(r){return r.json();})
+            .then(function(d){
+              var els=(d&&d.elements)||[], n=0;
+              els.forEach(function(e){
+                if(!e.lat||!e.lon)return; n++;
+                L.circleMarker([e.lat,e.lon],{radius:6,weight:1.5,color:'#0f172a',fillColor:'hsl(111 62% 42%)',fillOpacity:.95})
+                 .addTo(map).bindPopup('<b>'+(e.tags&&(e.tags.name||e.tags['name:en'])||'Unnamed')+'</b>');
+              });
+              msg.textContent=n?n+' found within 6 km. Tap a pin for the name.':'Nothing recorded within 6 km yet.';
+            });
+        })
+        .catch(function(){msg.textContent='The map could not load. Open the main map instead.';});
+    });
+  });
+})();
+</script>
+<h2>Questions about petrol pumps in Agartala</h2><details><summary>How many petrol pumps are there in Agartala?</summary><p>We do not publish a count we cannot verify. The live map shows every petrol pump recorded for Agartala and says plainly where a detail is not recorded.</p></details><details><summary>Where do I look for a petrol pump in Agartala?</summary><p>Start with highways, ring roads and city outskirts. In east india, Agartala follows the same pattern as Patna, Ranchi and Jamshedpur.</p></details><details><summary>Anything to watch out for?</summary><p>Yes — queues build up in the early morning and evening. Check the listing before you travel.</p></details><div class="rel"><a href="/">All cities</a><a href="/patna">Patna</a><a href="/ranchi">Ranchi</a></div>
 </main>
 <script src="/js/analytics.js" defer></script>
 </body>
